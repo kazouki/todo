@@ -8,7 +8,7 @@ function App() {
     <div className="App">
       <AddItem />
       <hr />
-      <List listNr={1} />
+      <List listId={1} />
     </div>
   );
 }

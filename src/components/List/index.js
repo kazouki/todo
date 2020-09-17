@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
 
+import Item from "../Item";
+
 import { makeStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
@@ -14,11 +16,15 @@ import SendIcon from "@material-ui/icons/Send";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    maxWidth: 360,
+    maxWidth: 460,
     backgroundColor: theme.palette.background.paper,
   },
   nested: {
     paddingLeft: theme.spacing(4),
+  },
+  datetag: {
+    float: "right",
+    fontSize: 12,
   },
 }));
 
@@ -33,7 +39,7 @@ export default (props) => {
 
   const fetchList = async () => {
     try {
-      const res = await api(`list/${props.listNr}`);
+      const res = await api(`lists/${props.listId}`);
       setState(res.data);
     } catch (e) {
       console.log(e);
@@ -44,43 +50,42 @@ export default (props) => {
     fetchList();
   }, []);
 
-  const listMap = state
-    ? Object.keys(state).map((item) => {
-        return { item };
-      })
-    : null;
+  const list = state.list || {};
+  const items = list.items || [];
+
+  const RenderItem = (props) => {
+    return (
+      <ListItem button onClick={handleClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary={props.title} />
+        <div className={classes.datetag}>{props.date.split("T")[0]}</div>
+      </ListItem>
+    );
+  };
 
   return (
     <div>
-      {JSON.stringify(listMap)}
-
       <List
         component="nav"
         aria-labelledby="nested-list-subheader"
         subheader={
           <ListSubheader component="div" id="nested-list-subheader">
-            todo items
+            {list.name}
           </ListSubheader>
         }
         className={classes.root}
       >
-        <ListItem button>
-          <ListItemIcon>
-            <SendIcon />
-          </ListItemIcon>
-          <ListItemText primary="send a mail" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <DraftsIcon />
-          </ListItemIcon>
-          <ListItemText primary="write a mail" />
-        </ListItem>
-        <ListItem button onClick={handleClick}>
-          <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
-        </ListItem>
+        {items
+          ? items.map((item) => (
+              <RenderItem
+                key={item.id}
+                title={item.title}
+                date={item.createdAt}
+              />
+            ))
+          : null}
       </List>
     </div>
   );
