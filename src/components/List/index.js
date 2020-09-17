@@ -30,6 +30,7 @@ export default (props) => {
   const [state, setState] = useState({});
   const classes = useStyles();
   const [done, setDone] = useState(false);
+  const [hover, setHover] = useState({});
 
   const handleClick = () => {
     setDone(!done);
@@ -55,7 +56,17 @@ export default (props) => {
     return (
       <ListItem button onClick={handleClick}>
         <ListItemIcon>
-          <IconSwitch />
+          <div
+            onMouseOver={() => setHover({ [props.id]: true })}
+            onMouseOut={() => setHover({ [props.id]: false })}
+          >
+            {hover[props.id] ? (
+              <IconSwitch icon={props.icon} size={"l"} />
+            ) : (
+              <IconSwitch icon={props.icon} size={"m"} />
+            )}
+          </div>
+          {/* <IconSwitch icon={props.icon} /> */}
         </ListItemIcon>
         <ListItemText primary={props.title} />
         <div className={classes.datetag}>{props.date.split("T")[0]}</div>
@@ -79,7 +90,9 @@ export default (props) => {
           ? items.map((item) => (
               <RenderItem
                 key={item.id}
+                id={item.id}
                 title={item.title}
+                icon={item.icon}
                 date={item.createdAt}
               />
             ))

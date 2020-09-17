@@ -6,18 +6,25 @@ import SendIcon from "@material-ui/icons/Send";
 import AccessAlarmIcon from "@material-ui/icons/AccessAlarm";
 
 export default (props) => {
+  const switchSizeOf = (IconComponent) => {
+    return props.size === "l" ? (
+      <IconComponent style={{ fontSize: "32px" }} />
+    ) : (
+      <IconComponent />
+    );
+  };
   const switchIcon = () => {
     switch (props.icon) {
       case 1:
-        return <InboxIcon />;
+        return switchSizeOf(InboxIcon);
       case 2:
-        return <DraftsIcon />;
+        return switchSizeOf(DraftsIcon);
       case 3:
-        return <SendIcon />;
+        return switchSizeOf(SendIcon);
       case 4:
-        return <AccessAlarmIcon />;
+        return switchSizeOf(AccessAlarmIcon);
       default:
-        return <InboxIcon />;
+        return switchSizeOf(InboxIcon);
     }
   };
   const RenderIcon = switchIcon();
