@@ -2,16 +2,14 @@ import React, { useState, useEffect } from "react";
 import api from "../../api";
 
 import Item from "../Item";
+import IconSwitch from "../Icons";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
 
 import { makeStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
-import SendIcon from "@material-ui/icons/Send";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,7 +55,7 @@ export default (props) => {
     return (
       <ListItem button onClick={handleClick}>
         <ListItemIcon>
-          <InboxIcon />
+          <IconSwitch />
         </ListItemIcon>
         <ListItemText primary={props.title} />
         <div className={classes.datetag}>{props.date.split("T")[0]}</div>
