@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
 
-import Item from "../Item";
 import IconSwitch from "../Icons";
+import AddItem from "../AddItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 import { makeStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";
@@ -23,18 +24,15 @@ const useStyles = makeStyles((theme) => ({
   datetag: {
     float: "right",
     fontSize: 12,
+    marginRight: 10,
   },
 }));
 
 export default (props) => {
   const [state, setState] = useState({});
-  const classes = useStyles();
   const [done, setDone] = useState(false);
   const [hover, setHover] = useState({});
-
-  const handleClick = () => {
-    setDone(!done);
-  };
+  const classes = useStyles();
 
   const fetchList = async () => {
     try {
@@ -49,28 +47,53 @@ export default (props) => {
     fetchList();
   }, []);
 
+  const handleItemClick = () => {
+    setDone(!done);
+  };
+
+  const handleDeleteItem = async (itemId) => {
+    try {
+      const res = await api(`items/${itemId}`, {
+        method: "DELETE",
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleIconClick = (itemId) => {
+    console.log("icon clocker", itemId);
+    // api(`icon/${itemId}`, {
+    //   method: "POST",
+    // });
+  };
+
   const list = state.list || {};
   const items = list.items || [];
 
   const RenderItem = (props) => {
     return (
-      <ListItem button onClick={handleClick}>
-        <ListItemIcon>
-          <div
-            onMouseOver={() => setHover({ [props.id]: true })}
-            onMouseOut={() => setHover({ [props.id]: false })}
-          >
-            {hover[props.id] ? (
-              <IconSwitch icon={props.icon} size={"l"} />
-            ) : (
-              <IconSwitch icon={props.icon} size={"m"} />
-            )}
-          </div>
-          {/* <IconSwitch icon={props.icon} /> */}
-        </ListItemIcon>
-        <ListItemText primary={props.title} />
-        <div className={classes.datetag}>{props.date.split("T")[0]}</div>
-      </ListItem>
+      <>
+        <ListItem button onClick={() => handleIconClick(props.id)}>
+          <ListItemIcon>
+            <div
+              onMouseOver={() => setHover({ [props.id]: true })}
+              onMouseOut={() => setHover({ [props.id]: false })}
+            >
+              {hover[props.id] ? (
+                <IconSwitch icon={props.icon} size={"l"} />
+              ) : (
+                <IconSwitch icon={props.icon} size={"m"} />
+              )}
+            </div>
+          </ListItemIcon>
+          <ListItemText primary={props.title} />
+          <div className={classes.datetag}>{props.date.split("T")[0]}</div>
+          {hover[props.id] ? (
+            <DeleteOutlineIcon onClick={() => handleDeleteItem(props.id)} />
+          ) : null}
+        </ListItem>
+      </>
     );
   };
 
@@ -97,6 +120,9 @@ export default (props) => {
               />
             ))
           : null}
+        <ListItem>
+          <AddItem listId={props.listId} />
+        </ListItem>
       </List>
     </div>
   );

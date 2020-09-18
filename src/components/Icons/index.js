@@ -8,7 +8,8 @@ import AccessAlarmIcon from "@material-ui/icons/AccessAlarm";
 export default (props) => {
   const switchSizeOf = (IconComponent) => {
     return props.size === "l" ? (
-      <IconComponent style={{ fontSize: "32px" }} />
+      // <IconComponent style={{ fontSize: "32px" }} />
+      <IconComponent style={{ transform: "scale(1.5)" }} />
     ) : (
       <IconComponent />
     );
