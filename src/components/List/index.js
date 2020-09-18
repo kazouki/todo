@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 export default (props) => {
   const [state, setState] = useState({});
   const [done, setDone] = useState(false);
+  const [iconHover, setIconHover] = useState({});
   const [hover, setHover] = useState({});
   const classes = useStyles();
 
@@ -74,13 +75,17 @@ export default (props) => {
   const RenderItem = (props) => {
     return (
       <>
-        <ListItem button onClick={() => handleIconClick(props.id)}>
+        <ListItem
+          button
+          onMouseOver={() => setHover({ [props.id]: true })}
+          onMouseOut={() => setHover({ [props.id]: false })}
+        >
           <ListItemIcon>
             <div
-              onMouseOver={() => setHover({ [props.id]: true })}
-              onMouseOut={() => setHover({ [props.id]: false })}
+              onMouseOver={() => setIconHover({ [props.id]: true })}
+              onMouseOut={() => setIconHover({ [props.id]: false })}
             >
-              {hover[props.id] ? (
+              {iconHover[props.id] ? (
                 <IconSwitch icon={props.icon} size={"l"} />
               ) : (
                 <IconSwitch icon={props.icon} size={"m"} />
