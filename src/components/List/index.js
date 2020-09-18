@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+import { useSelector, useDispatch } from "react-redux";
+import { SELECTED_ITEM } from "../../store/appState/actions";
+
 import api from "../../api";
 
 import IconSwitch from "../Icons";
@@ -30,17 +33,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default (props) => {
-  const [done, setDone] = useState(false);
   const [iconHover, setIconHover] = useState({});
   const [hover, setHover] = useState({});
   const classes = useStyles();
+  const dispatch = useDispatch();
 
-  const handleItemClick = () => {
-    setDone(!done);
+  const handleItemClick = (itemId) => {
+    //TODO dispatch selectedItem action
+    dispatch({
+      type: SELECTED_ITEM,
+      payload: items.find((item) => item.id === itemId),
+    });
   };
 
   const handleDeleteItem = async (itemId) => {
-    console.log("delete reached");
+    //TODO  dispatch delete action
     try {
       await api(`items/${itemId}`, {
         method: "DELETE",
@@ -51,6 +58,8 @@ export default (props) => {
   };
 
   const handleIconClick = (itemId) => {
+    //TODO dispatch change icon action
+
     console.log("icon clocker", itemId);
     // api(`icon/${itemId}`, {
     //   method: "POST",
@@ -64,6 +73,7 @@ export default (props) => {
     return (
       <>
         <ListItem
+          onClick={() => handleItemClick(props.id)}
           onMouseOver={() => setHover({ [props.id]: true })}
           onMouseOut={() => setHover({ [props.id]: false })}
         >

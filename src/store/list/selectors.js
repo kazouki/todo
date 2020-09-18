@@ -1,3 +1,3 @@
 export const selectLists = (state) => {
-  return state.listSliceReducer.lists;
+  return state.list.lists;
 };

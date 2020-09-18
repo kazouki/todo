@@ -1,13 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
+
 import List from "../List";
+import NoteEditor from "../NoteEditor";
 
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
 
 import { fetchLists } from "../../store/list/actions";
+
+import { selectedItem } from "../../store/appState/selectors";
 import { selectLists } from "../../store/list/selectors";
 
 export default () => {
@@ -52,7 +57,7 @@ export default () => {
     sectionList: {
       padding: theme.spacing(2),
       minHeight: 500,
-      minWidth: 500,
+      minWidth: 400,
       textAlign: "center",
       background: "white",
     },
@@ -63,7 +68,7 @@ export default () => {
     sectionContent: {
       padding: theme.spacing(2),
       minHeight: 500,
-      minWidth: 500,
+      minWidth: 400,
       background: "white",
       textAlign: "left",
     },
@@ -95,7 +100,7 @@ export default () => {
           <Grid item xs={12} sm={6}>
             <Container className={classes.sectionContent}>
               <Grid container spacing={3}>
-                CONTENT FORM HERE
+                <NoteEditor />
               </Grid>
               <Grid item xs={12} sm={12}></Grid>
             </Container>

@@ -1,6 +1,8 @@
 import { combineReducers } from "redux";
-import listSliceReducer from "./list/reducer";
+import list from "./list/reducer";
+import appState from "./appState/reducer";
 
 export default combineReducers({
-  listSliceReducer,
+  appState,
+  list,
 });

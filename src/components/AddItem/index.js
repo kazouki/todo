@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import api from "../../api";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
+import { useDispatch } from "react-redux";
+import { addItem } from "../../store/list/actions";
+
 export default (props) => {
   const [itemTitle, setItemTitle] = useState("");
+  const dispatch = useDispatch();
 
-  const handleButtonClick = async () => {
-    try {
-      const res = await api(`items`, {
-        method: "POST",
-        data: { title: itemTitle, listId: props.listId },
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  const handleButtonClick = () => {
+    dispatch(addItem({ title: itemTitle, listId: props.listId }));
   };
 
   return (
