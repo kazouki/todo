@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+
+import { useSelector, useDispatch } from "react-redux";
+import { SELECTED_ITEM } from "../../store/appState/actions";
+
 import api from "../../api";
 
 import IconSwitch from "../Icons";
@@ -29,32 +33,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default (props) => {
-  const [state, setState] = useState({});
-  const [done, setDone] = useState(false);
   const [iconHover, setIconHover] = useState({});
   const [hover, setHover] = useState({});
   const classes = useStyles();
+  const dispatch = useDispatch();
 
-  const fetchList = async () => {
-    try {
-      const res = await api(`lists/${props.listId}`);
-      setState(res.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    fetchList();
-  }, []);
-
-  const handleItemClick = () => {
-    setDone(!done);
+  const handleItemClick = (itemId) => {
+    //TODO dispatch selectedItem action
+    dispatch({
+      type: SELECTED_ITEM,
+      payload: items.find((item) => item.id === itemId),
+    });
   };
 
   const handleDeleteItem = async (itemId) => {
+    //TODO  dispatch delete action
     try {
-      const res = await api(`items/${itemId}`, {
+      await api(`items/${itemId}`, {
         method: "DELETE",
       });
     } catch (e) {
@@ -63,20 +58,22 @@ export default (props) => {
   };
 
   const handleIconClick = (itemId) => {
+    //TODO dispatch change icon action
+
     console.log("icon clocker", itemId);
     // api(`icon/${itemId}`, {
     //   method: "POST",
     // });
   };
 
-  const list = state.list || {};
-  const items = list.items || [];
+  const list = props.list || {};
+  const items = props.list.items || [];
 
   const RenderItem = (props) => {
     return (
       <>
         <ListItem
-          button
+          onClick={() => handleItemClick(props.id)}
           onMouseOver={() => setHover({ [props.id]: true })}
           onMouseOut={() => setHover({ [props.id]: false })}
         >
@@ -93,10 +90,14 @@ export default (props) => {
             </div>
           </ListItemIcon>
           <ListItemText primary={props.title} />
-          <div className={classes.datetag}>{props.date.split("T")[0]}</div>
           {hover[props.id] ? (
-            <DeleteOutlineIcon onClick={() => handleDeleteItem(props.id)} />
-          ) : null}
+            <div onClick={() => handleDeleteItem(props.id)}>
+              <DeleteOutlineIcon />
+            </div>
+          ) : (
+            <div />
+          )}
+          <div className={classes.datetag}>{props.date.split("T")[0]}</div>
         </ListItem>
       </>
     );

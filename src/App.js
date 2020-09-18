@@ -1,12 +1,11 @@
 import React from "react";
 import "./App.css";
-import List from "./components/List";
+import Layout from "./components/Layout";
 
 function App() {
   return (
     <div className="App">
-      <hr />
-      <List listId={1} />
+      <Layout />
     </div>
   );
 }
