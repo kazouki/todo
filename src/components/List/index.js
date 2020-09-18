@@ -1,39 +1,43 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
 
+import IconSwitch from "../Icons";
+import AddItem from "../AddItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+
 import { makeStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
-import SendIcon from "@material-ui/icons/Send";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    maxWidth: 360,
+    maxWidth: 460,
     backgroundColor: theme.palette.background.paper,
   },
   nested: {
     paddingLeft: theme.spacing(4),
   },
+  datetag: {
+    float: "right",
+    fontSize: 12,
+    marginRight: 10,
+  },
 }));
 
 export default (props) => {
   const [state, setState] = useState({});
-  const classes = useStyles();
   const [done, setDone] = useState(false);
-
-  const handleClick = () => {
-    setDone(!done);
-  };
+  const [iconHover, setIconHover] = useState({});
+  const [hover, setHover] = useState({});
+  const classes = useStyles();
 
   const fetchList = async () => {
     try {
-      const res = await api(`list/${props.listNr}`);
+      const res = await api(`lists/${props.listId}`);
       setState(res.data);
     } catch (e) {
       console.log(e);
@@ -44,42 +48,85 @@ export default (props) => {
     fetchList();
   }, []);
 
-  const listMap = state
-    ? Object.keys(state).map((item) => {
-        return { item };
-      })
-    : null;
+  const handleItemClick = () => {
+    setDone(!done);
+  };
+
+  const handleDeleteItem = async (itemId) => {
+    try {
+      const res = await api(`items/${itemId}`, {
+        method: "DELETE",
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleIconClick = (itemId) => {
+    console.log("icon clocker", itemId);
+    // api(`icon/${itemId}`, {
+    //   method: "POST",
+    // });
+  };
+
+  const list = state.list || {};
+  const items = list.items || [];
+
+  const RenderItem = (props) => {
+    return (
+      <>
+        <ListItem
+          button
+          onMouseOver={() => setHover({ [props.id]: true })}
+          onMouseOut={() => setHover({ [props.id]: false })}
+        >
+          <ListItemIcon>
+            <div
+              onMouseOver={() => setIconHover({ [props.id]: true })}
+              onMouseOut={() => setIconHover({ [props.id]: false })}
+            >
+              {iconHover[props.id] ? (
+                <IconSwitch icon={props.icon} size={"l"} />
+              ) : (
+                <IconSwitch icon={props.icon} size={"m"} />
+              )}
+            </div>
+          </ListItemIcon>
+          <ListItemText primary={props.title} />
+          <div className={classes.datetag}>{props.date.split("T")[0]}</div>
+          {hover[props.id] ? (
+            <DeleteOutlineIcon onClick={() => handleDeleteItem(props.id)} />
+          ) : null}
+        </ListItem>
+      </>
+    );
+  };
 
   return (
     <div>
-      {JSON.stringify(listMap)}
-
       <List
         component="nav"
         aria-labelledby="nested-list-subheader"
         subheader={
           <ListSubheader component="div" id="nested-list-subheader">
-            todo items
+            {list.name}
           </ListSubheader>
         }
         className={classes.root}
       >
-        <ListItem button>
-          <ListItemIcon>
-            <SendIcon />
-          </ListItemIcon>
-          <ListItemText primary="send a mail" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <DraftsIcon />
-          </ListItemIcon>
-          <ListItemText primary="write a mail" />
-        </ListItem>
-        <ListItem button onClick={handleClick}>
-          <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
+        {items
+          ? items.map((item) => (
+              <RenderItem
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                icon={item.icon}
+                date={item.createdAt}
+              />
+            ))
+          : null}
+        <ListItem>
+          <AddItem listId={props.listId} />
         </ListItem>
       </List>
     </div>
