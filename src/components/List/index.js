@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import api from "../../api";
 
 import IconSwitch from "../Icons";
@@ -29,32 +30,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default (props) => {
-  const [state, setState] = useState({});
   const [done, setDone] = useState(false);
   const [iconHover, setIconHover] = useState({});
   const [hover, setHover] = useState({});
   const classes = useStyles();
-
-  const fetchList = async () => {
-    try {
-      const res = await api(`lists/${props.listId}`);
-      setState(res.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    fetchList();
-  }, []);
 
   const handleItemClick = () => {
     setDone(!done);
   };
 
   const handleDeleteItem = async (itemId) => {
+    console.log("delete reached");
     try {
-      const res = await api(`items/${itemId}`, {
+      await api(`items/${itemId}`, {
         method: "DELETE",
       });
     } catch (e) {
@@ -69,14 +57,13 @@ export default (props) => {
     // });
   };
 
-  const list = state.list || {};
-  const items = list.items || [];
+  const list = props.list || {};
+  const items = props.list.items || [];
 
   const RenderItem = (props) => {
     return (
       <>
         <ListItem
-          button
           onMouseOver={() => setHover({ [props.id]: true })}
           onMouseOut={() => setHover({ [props.id]: false })}
         >
@@ -93,10 +80,14 @@ export default (props) => {
             </div>
           </ListItemIcon>
           <ListItemText primary={props.title} />
-          <div className={classes.datetag}>{props.date.split("T")[0]}</div>
           {hover[props.id] ? (
-            <DeleteOutlineIcon onClick={() => handleDeleteItem(props.id)} />
-          ) : null}
+            <div onClick={() => handleDeleteItem(props.id)}>
+              <DeleteOutlineIcon />
+            </div>
+          ) : (
+            <div />
+          )}
+          <div className={classes.datetag}>{props.date.split("T")[0]}</div>
         </ListItem>
       </>
     );
